@@ -28,15 +28,15 @@ import { AnimatedSunsetIcon     } from './assets/meteo/sunset';
 
 
 export function SmallDigitalClock() {
-    const [ora, setOra] = useState(new Date());
+    const [hour, setHour] = useState(new Date());
 
     useEffect(() => {
-        const timer = setInterval(() => setOra(new Date()), 1000);
+        const timer = setInterval(() => setHour(new Date()), 1000);
         return () => clearInterval(timer);
     }, []);
 
-    const opzioniOra: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit'};
-    const opzioniData: Intl.DateTimeFormatOptions = { weekday: 'short', day: 'numeric', month: 'numeric', year: 'numeric' };
+    const optionHour: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit'};
+    const optionDate: Intl.DateTimeFormatOptions = { weekday: 'short', day: 'numeric', month: 'numeric', year: 'numeric' };
 
 
     return (
@@ -44,10 +44,10 @@ export function SmallDigitalClock() {
             <SeasonalIcon></SeasonalIcon>
             <div className='flex-col gap-5 '>
                 <h1 className="text-7xl">
-                    {ora.toLocaleTimeString('it-IT', opzioniOra)}
+                    {hour.toLocaleTimeString('it-IT', optionHour)}
                 </h1>
                 <p className="text-xl ml-2 capitalize">
-                    {ora.toLocaleDateString('it-IT', opzioniData)}
+                    {hour.toLocaleDateString('it-IT', optionDate)}
                 </p>
             </div>
         </div>
