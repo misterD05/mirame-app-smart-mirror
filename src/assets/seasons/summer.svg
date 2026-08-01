@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <defs>
+    <!-- Sfumatura Telo Ombrellone -->
+    <linearGradient id="summerCanopyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#facc15" />
+      <stop offset="50%" stop-color="#fb8500" />
+      <stop offset="100%" stop-color="#ef4444" />
+    </linearGradient>
+  </defs>
+
+  <!-- Telo Ombrellone -->
+  <path d="M20.425 5.299a10 10 0 0 0-16.941 9.78c.183.563.843.774 1.355.478L20.16 6.711c.512-.296.66-.973.264-1.413"
+        stroke="url(#summerCanopyGrad)"
+        stroke-width="2"
+        fill="url(#summerCanopyGrad)"
+        fill-opacity="0.25"/>
+
+  <!-- Bastone dell'Ombrellone -->
+  <path d="M12.5 11.134 18.196 21" stroke="#b45309" stroke-width="2"/>
+
+  <!-- Sabbia dell'Orizzonte/Spiaggia -->
+  <path d="M21 21H3" stroke="#f59e0b" stroke-width="2.5"/>
+</svg>
