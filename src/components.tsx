@@ -185,12 +185,14 @@ export const SeasonalIcon: React.FC<SeasonalIconProps> = ({
 export function OpenmeteoStats() {
     const [weatherData, setWeatherData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [hour, setHour] = useState<number>(0)
 
     useEffect(() => {
         async function fetchData() {
             try {
                 const data = await callOpenMeteo();
                 setWeatherData(data);
+
 
             } catch (error) {
                 console.error("Errore durante il recupero dei dati meteo:", error);
@@ -200,6 +202,8 @@ export function OpenmeteoStats() {
         }
 
         fetchData();
+        let date = new Date();
+        setHour(date.getHours());
     }, []);
 
     if (loading) {
@@ -211,14 +215,91 @@ export function OpenmeteoStats() {
     }
 
     return (
-        <div className='p-5 h-fit w-fit flex gap-5 items-center border-2 border-white rounded-[20px]'>
-            <CurrentWeatherCard weatherData={weatherData}></CurrentWeatherCard>
-            <div className='flex-col gap-5 '>
-                <h1 className="text-3xl">
-                    {weatherData?.current?.temperature_2m.toFixed(2) ?? "--"} °C
-                </h1>
+        <div className='p-5 h-fit w-fit flex flex-col items-start center gap-5 border-2 border-white rounded-[20px]'>
+            <div className='h-fit w-fit flex gap-5 items-center'>
+                <CurrentWeatherCard weatherData={weatherData}></CurrentWeatherCard>
+                <div className='flex-col gap-5 '>
+                    <h1 className="text-xl">
+                        Temperature:{' '}
+                        <span className='font-bold'>{weatherData?.current?.temperature_2m.toFixed(2) ?? "--"} °C</span>
+                    </h1>
+                    <h1 className="text-xl">
+                        Apparent Temp.:{' '}
+                        <span className='font-bold'>{weatherData?.current?.apparent_temperature.toFixed(2) ?? "--"} °C</span>
+                    </h1>
+                    <h1 className="text-xl">
+                        Precipitation Prob.:{' '}
+                        <span className='font-bold'>{weatherData?.hourly?.precipitation_probability[hour].toFixed(2) ?? "--"} %</span>
+                    </h1>
+                </div>
+
+            </div>
+            <div className='h-fit w-fit flex gap-5 items-center'>
+                <AnimatedWindIcon></AnimatedWindIcon>
+                <div className='flex-col gap-5 '>
+                    <h1 className="text-xl">
+                        Wind 10m:{' '}
+                        <span className='font-bold'>{weatherData?.current?.wind_speed_10m.toFixed(2) ?? "--"} km/h</span>
+                        <div>
+                        <h1 className="text-xl font-medium">
+                            Direction:{' '}
+                            <span className="font-bold">
+                                {getWindDirectionCardinal(weatherData?.current?.wind_direction_10m)} ({weatherData?.current?.wind_direction_10m !== undefined && weatherData?.current?.wind_direction_10m !== null ? weatherData?.current?.wind_direction_10 : "--"}°)
+                            </span>
+                        </h1>
+                        </div>
+                    </h1>
+                </div>
+                <WindDirection weatherData={weatherData}></WindDirection>
             </div>
         </div>
+    );
+}
+
+function getWindDirectionCardinal(degrees?: number): string {
+    if (degrees === undefined || degrees === null) return "--";
+
+    const directions = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+    const windTargetDegrees = (degrees + 180) % 360;
+
+    const index = Math.round(windTargetDegrees / 22.5) % 16;
+    return directions[index];
+}
+
+
+export function WindDirection({ weatherData }: { weatherData: any }) {
+    const degrees = weatherData?.current?.wind_direction_10m;
+    const cardinal = getWindDirectionCardinal(degrees);
+
+    const rotationStyle = degrees !== undefined && degrees !== null ? { transform: `rotate(${(degrees + 180)}deg)` } : {};
+
+    return (
+        <div className="flex items-center gap-4">
+        <div className="relative w-24 h-24 rounded-full border-1 border-slate-300 flex items-center justify-center select-none">
+
+            <span className="absolute top-0.5 text-xl font-bold text-blue-500">N</span>
+            <span className="absolute right-1 text-xl font-bold text-slate-400">E</span>
+            <span className="absolute bottom-0.5 text-xl font-bold text-slate-400">S</span>
+            <span className="absolute left-1 text-xl font-bold text-slate-400">O</span>
+
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="35"
+                height="35"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-red-500 transition-transform duration-500 ease-out"
+                style={rotationStyle}
+            >
+                <path d="M9 16a1 1 0 0 1-1-1v-2a1 1 0 0 0-1-1H3.707a.707.707 0 0 1-.5-1.207l6.939-6.939a1.207 1.207 0 0 1 1.708 0l6.94 6.94a.707.707 0 0 1-.5 1.206H16a1 1 0 0 0-1 1v2a1 1 0 0 1-1 1z"/>
+                <path d="M15 20H9"/>
+            </svg>
+        </div>
+    </div>
     );
 }
 
