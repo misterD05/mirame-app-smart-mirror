@@ -228,6 +228,10 @@ export function OpenmeteoStats() {
                         <span className='font-bold'>{weatherData?.current?.apparent_temperature.toFixed(2) ?? "--"} °C</span>
                     </h1>
                     <h1 className="text-xl">
+                        Relative Humidity:{' '}
+                        <span className='font-bold'>{weatherData?.current?.relative_humidity_2m.toFixed(2) ?? "--"} %</span>
+                    </h1>
+                    <h1 className="text-xl">
                         Precipitation Prob.:{' '}
                         <span className='font-bold'>{weatherData?.hourly?.precipitation_probability[hour].toFixed(2) ?? "--"} %</span>
                     </h1>
@@ -310,7 +314,7 @@ export const CurrentWeatherCard = ({ weatherData }: { weatherData: any }) => {
 
     return (
         <div className="weather-card">
-            <IconComponent width={64} height={64} />
+            <IconComponent width={90} height={90} />
         </div>
     );
 };
@@ -351,34 +355,34 @@ export const getWeatherIconKey = (weatherData : any): MeteoKey => {
     }
 
     switch (weatherData.current.code) {
-        // 0: Cielo Sereno
+        // 0: Normal Sky
         case 0:
             return isNight ? "moon" : "sun";
 
-        // 1, 2, 3: Prevalentemente sereno, Parzialmente nuvoloso, Coperto
+        // 1, 2, 3: Cloudy
         case 1:
         case 2:
             return isNight ? "cloudMoon" : "cloudSun";
         case 3:
             return "cloud";
 
-        // 45, 48: Nebbia
+        // 45, 48: Fog
         case 45:
         case 48:
             return "cloud";
 
-        // 51, 53, 55, 56, 57: Pioviggine (Drizzle)
-        // 61, 63, 65, 66, 67: Pioggia
-        // 80, 81, 82: Rovesci di pioggia (Rain showers)
+        // 51, 53, 55, 56, 57: Drizzle
+        // 61, 63, 65, 66, 67: Rain
+        // 80, 81, 82: Rain showers
         case 51: case 53: case 55: case 56: case 57: case 61: case 63: case 65: case 66: case 67: case 80: case 81: case 82:
             return "rain";
 
-        // 71, 73, 75, 77: Neve
-        // 85, 86: Rovesci di neve
+        // 71, 73, 75, 77: Snow
+        // 85, 86: Snow storm
         case 71: case 73: case 75: case 77: case 85: case 86:
             return "snow";
 
-        // 95, 96, 99: Temporale / Temporale con grandine
+        // 95, 96, 99: Storm
         case 95: case 96:case 99:
             return "storm";
 
@@ -386,3 +390,115 @@ export const getWeatherIconKey = (weatherData : any): MeteoKey => {
             return isNight ? "moon" : "sun";
     }
 };
+
+
+
+
+interface TaskProps{
+    name: string;
+    description: string;
+    time: Date;
+    place: string;
+    other: string
+}
+
+export function Task({
+    name,
+    description,
+    time,
+    place = "Home",
+    other = "none, maybe re-check"
+} : TaskProps) {
+
+}
+
+export function Calendar() {
+    const [currentDate, setCurrentDate] = useState(new Date());
+
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDayOfWeek = (new Date(year, month, 1).getDay() + 6) % 7;
+
+    const lang = import.meta.env.VITE_LANG;
+
+    const monthName = new Intl.DateTimeFormat(lang, {
+        month: 'long',
+        year: 'numeric'
+    }).format(currentDate);
+
+    const weekDays = Array.from({ length: 7 }, (_, i) => {
+        const date = new Date(2026, 0, 5 + i);
+        return new Intl.DateTimeFormat(lang, { weekday: 'narrow' }).format(date);
+    });
+
+    const isToday = (day: number) => {
+        const now = new Date();
+        return (
+            day === now.getDate() &&
+            month === now.getMonth() &&
+            year === now.getFullYear()
+        );
+    };
+
+    const handlePrevMonth = () => {
+        setCurrentDate(new Date(year, month - 1, 1));
+    };
+
+    const handleNextMonth = () => {
+        setCurrentDate(new Date(year, month + 1, 1));
+    };
+
+    return (
+        <div className="w-80 font-sans border border-white p-4 rounded-xl shadow-sm ">
+            <div className="flex items-center justify-between mb-3">
+                <button
+                    onClick={handlePrevMonth}
+                    className="p-1 rounded-md hover:bg-gray-100 transition-colors text-gray-600"
+                    aria-label="Mese precedente"
+                >
+                    ‹
+                </button>
+                <h3 className="capitalize font-semibold text-center text-white">
+                    {monthName}
+                </h3>
+                <button
+                    onClick={handleNextMonth}
+                    className="p-1 rounded-md hover:bg-gray-100 transition-colors text-gray-600"
+                    aria-label="Mese successivo"
+                >
+                    ›
+                </button>
+            </div>
+
+            <div className="grid grid-cols-7 gap-1 text-center">
+                {weekDays.map((day, i) => (
+                    <strong key={i} className="text-xs text-gray-500 py-1 uppercase">
+                        {day}
+                    </strong>
+                ))}
+
+                {Array.from({ length: firstDayOfWeek }).map((_, i) => (
+                    <div key={`empty-${i}`} className="py-2" />
+                ))}
+
+                {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
+                    const active = isToday(day);
+                    return (
+                        <div
+                            key={day}
+                            className={`py-2 text-sm rounded-full transition-colors cursor-pointer ${
+                                active
+                                    ? 'bg-blue-600 text-white font-bold'
+                                    : 'border-2 border-white text-white hover:bg-gray-100'
+                            }`}
+                        >
+                            {day}
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
