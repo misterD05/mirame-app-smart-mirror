@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 // @ts-ignore
 import './global.css';
 import { callOpenMeteo } from './apis';
-import cloud from './assets/meteo/cloud.svg';
 import { Seasons } from 'astronomy-engine';
 
 import winter from './assets/seasons/winter.svg';
@@ -21,7 +20,8 @@ import { AnimatedCloudMoonIcon  } from './assets/meteo/moonCloud';
 import { AnimatedMoonIcon       } from './assets/meteo/moon';
 import { AnimatedCloudSunIcon   } from './assets/meteo/sunCloud';
 import { AnimatedSunriseIcon    } from './assets/meteo/sunrise';
-import { AnimatedSunsetIcon     } from './assets/meteo/sunset';
+import { AnimatedSunsetIcon } from './assets/meteo/sunset';
+import { AnimatedCloudIcon } from './assets/meteo/cloud';
 
 
 
@@ -321,7 +321,7 @@ export const CurrentWeatherCard = ({ weatherData }: { weatherData: any }) => {
 
 
 const meteoEmoji = {
-    "cloud" : cloud,
+    "cloud" : AnimatedCloudIcon,
     "storm" : AnimatedStormIcon,
     "rain" : AnimatedRainIcon,
     "snow" : AnimatedSnowIcon,
@@ -353,8 +353,9 @@ export const getWeatherIconKey = (weatherData : any): MeteoKey => {
     if (sunsetTime && Math.abs(now - sunsetTime) <= MARGIN_MS) {
         return "sunset";
     }
+    console.log(`${weatherData.current.weather_code}`)
 
-    switch (weatherData.current.code) {
+    switch (weatherData.current.weather_code) {
         // 0: Normal Sky
         case 0:
             return isNight ? "moon" : "sun";
