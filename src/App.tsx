@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 // @ts-ignore
 import './global.css';
-import {OpenmeteoStats, SmallDigitalClock} from './components'
+import {Calendar, OpenmeteoStats, SmallDigitalClock} from './components'
 
 
 function App() {
@@ -13,6 +13,8 @@ function App() {
         <SmallDigitalClock></SmallDigitalClock>
         <br />
         <OpenmeteoStats></OpenmeteoStats>
+        <br />
+        <Calendar></Calendar>
       </div>
     </div>
   );
